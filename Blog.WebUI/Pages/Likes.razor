@@ -1,0 +1,67 @@
+﻿@page "/likes"
+@inject LikeService LikeService
+
+<h3>Likes to comment</h3>
+<hr />
+<EditForm Model="createCommentModel" OnValidSubmit="CreateLikeToComment">
+    <div class="form-group">
+        <label for="@createCommentModel.TargetElementId">Target Id</label>
+        <input type="text" class="form-control" @bind-value="@createCommentModel.TargetElementId" />
+    </div>
+    <div class="form-group">
+        <label for="@createCommentModel.OwnerId">Owner Id</label>
+        <input type="text" class="form-control" @bind-value="@createCommentModel.OwnerId" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Create to comment</button>
+</EditForm>
+<hr />
+<h3>Likes to comment</h3>
+<hr />
+<EditForm Model="createPostModel" OnValidSubmit="CreateLikeToPost">
+    <div class="form-group">
+        <label for="@createPostModel.TargetElementId">Target Id</label>
+        <input type="text" class="form-control" @bind-value="@createPostModel.TargetElementId" />
+    </div>
+    <div class="form-group">
+        <label for="@createPostModel.OwnerId">Owner Id</label>
+        <input type="text" class="form-control" @bind-value="@createPostModel.OwnerId" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Create to post</button>
+</EditForm>
+<hr />
+
+<h3>Delete Like</h3>
+<hr />
+<EditForm Model="deleteModel" OnValidSubmit="DeleteLike">
+    <div class="form-group">
+        <label for="@deleteModel.TargetElementId">Target Id</label>
+        <input type="text" class="form-control" @bind-value="@deleteModel.TargetElementId" />
+    </div>
+    <div class="form-group">
+        <label for="@deleteModel.OwnerId">Owner Id</label>
+        <input type="text" class="form-control" @bind-value="@deleteModel.OwnerId" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Delete like</button>
+</EditForm>
+<hr />
+
+@code {
+    private CreateLikeTransferModel createCommentModel = new CreateLikeTransferModel();
+    private CreateLikeTransferModel createPostModel = new CreateLikeTransferModel();
+    private DeleteLikeTransferModel deleteModel = new DeleteLikeTransferModel();
+
+    private async Task CreateLikeToComment()
+    {
+        await LikeService.AppendLikeToComment(createCommentModel);
+    }
+
+    private async Task CreateLikeToPost()
+    {
+        await LikeService.AppendLikeToPost(createPostModel);
+    }
+
+    private async Task DeleteLike()
+    {
+        await LikeService.DeleteLike(deleteModel);
+    }
+}

@@ -1,0 +1,92 @@
+﻿@page "/comments"
+@inject CommentService CommentService
+
+@ErrorMessage
+
+<p>Create Post</p>
+<hr />
+<EditForm Model="createModel" OnValidSubmit="CreateComment">
+    <div class="form-group">
+        <label for="@createModel.Content">Content</label>
+        <input type="text" class="form-control" @bind-value="@createModel.Content" />
+    </div>
+    <div class="form-group">
+        <label for="@createModel.AuthorId">AuthorId</label>
+        <input type="text" class="form-control" @bind-value="@createModel.AuthorId" />
+    </div>
+    <div class="form-group">
+        <label for="@createModel.PostId">PostId</label>
+        <input type="text" class="form-control" @bind-value="@createModel.PostId" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Create</button>
+</EditForm>
+<hr />
+
+<p>Update Post</p>
+<hr />
+<EditForm Model="updateModel" OnValidSubmit="UpdateComment">
+    <div class="form-group">
+        <label for="@updateModel.Id">Id</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.Id" />
+    </div>
+    <div class="form-group">
+        <label for="@updateModel.Content">Content</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.Content" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Update</button>
+</EditForm>
+<hr />
+
+<p>Delete Post</p>
+<hr />
+<EditForm Model="deleteModel" OnValidSubmit="DeleteComment">
+    <div class="form-group">
+        <label for="@deleteModel.Id">Id</label>
+        <input type="text" class="form-control" @bind-value="@deleteModel.Id" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Delete</button>
+</EditForm>
+<hr />
+
+@code {
+    private readonly CreateCommentTransferModel createModel = new CreateCommentTransferModel();
+    private readonly UpdateCommentTransferModel updateModel = new UpdateCommentTransferModel();
+    private readonly DeleteCommentTransferModel deleteModel = new DeleteCommentTransferModel();
+    private string ErrorMessage = "";
+
+    private async Task CreateComment()
+    {
+        try
+        {
+            await CommentService.CreateComment(createModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private async Task UpdateComment()
+    {
+        try
+        {
+            await CommentService.UpdateComment(updateModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private async Task DeleteComment()
+    {
+        try
+        {
+            await CommentService.DeleteComment(deleteModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}

@@ -1,0 +1,172 @@
+﻿@page "/posts"
+@inject PostService PostService
+@inject IPost post
+@using Blog.Application.Posts.Queries
+@using Blog.Domain.Interfaces
+
+@ErrorMessage
+
+<p>Create Post</p>
+<hr />
+<EditForm Model="createModel" OnValidSubmit="CreatePost">
+    <div class="form-group">
+        <label for="@createModel.Title">Title</label>
+        <input type="text" class="form-control" @bind-value="@createModel.Title" />
+    </div>
+    <div class="form-group">
+        <label for="@createModel.Content">Content</label>
+        <input type="text" class="form-control" @bind-value="@createModel.Content" />
+    </div>
+    <div class="form-group">
+        <label for="@createModel.ImageFileName">ImageFileName</label>
+        <input type="text" class="form-control" @bind-value="@createModel.ImageFileName" />
+    </div>
+    <div class="form-group">
+        <label for="@createModel.AuthorId">AuthorId</label>
+        <input type="text" class="form-control" @bind-value="@createModel.AuthorId" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Create</button>
+</EditForm>
+<hr />
+
+<p>Update Post</p>
+<hr />
+<EditForm Model="updateModel" OnValidSubmit="UpdatePost">
+    <div class="form-group">
+        <label for="@updateModel.Id">Id</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.Id" />
+    </div>
+    <div class="form-group">
+        <label for="@updateModel.Title">Title</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.Title" />
+    </div>
+    <div class="form-group">
+        <label for="@updateModel.Content">Content</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.Content" />
+    </div>
+    <div class="form-group">
+        <label for="@updateModel.ImageFileName">ImageFileName</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.ImageFileName" />
+    </div>
+    <div class="form-group">
+        <label for="@updateModel.EditorId">EditorId</label>
+        <input type="text" class="form-control" @bind-value="@updateModel.EditorId" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Update</button>
+</EditForm>
+<hr />
+
+<p>Delete Post</p>
+<hr />
+<EditForm Model="deleteModel" OnValidSubmit="DeletePost">
+    <div class="form-group">
+        <label for="@deleteModel.Id">Id</label>
+        <input type="text" class="form-control" @bind-value="@deleteModel.Id" />
+    </div>
+    <button type="submit" class="btn btn-secondary">Delete</button>
+</EditForm>
+<hr />
+
+<input type="text" @bind-value="QueryPostId" />
+<button @onclick="GetSingle" class="d-inline-block">GetSingle</button>
+<button @onclick="GetFullSingle" class="d-inline-block">GetFullSingle</button>
+<button @onclick="GetSingleWithLikes" class="d-inline-block">GetSingleWithLikes</button>
+
+<h2>Post</h2>
+<p>@post.Id</p>
+<p>@post.Title</p>
+<p>@post.Content</p>
+<p>@post.ImageFileName</p>
+<p>@post.AuthorId</p>
+<p>@post.CreatedTimestamp</p>
+<p>@post.EditedTimestamp</p>
+<p>@post.EditorId</p>
+<h3>Related Likes</h3>
+@foreach (ILike like in post.LikesCollection)
+{
+    <hr />
+    <p>@like.Id</p>
+    <p>@like.LikedElement</p>
+    <p>@like.OwnerId</p>
+    <hr />
+}
+
+<h3>Related Comments</h3>
+@foreach (IComment comment in post.CommentsCollection)
+{
+    <hr />
+    <p>@comment.Id</p>
+    <p>@comment.Content</p>
+    <p>@comment.AuthorId</p>
+    <p>@comment.PostId</p>
+
+    <h3>Related Comment Likes</h3>
+    foreach (ILike like in comment.LikesCollection)
+    {
+        <hr />
+        <p>@like.Id</p>
+        <p>@like.LikedElement</p>
+        <p>@like.OwnerId</p>
+        <hr />
+    }
+    <hr />
+}
+
+@code {
+    private readonly CreatePostTransferModel createModel = new CreatePostTransferModel();
+    private readonly UpdatePostTransferModel updateModel = new UpdatePostTransferModel();
+    private readonly DeletePostTransferModel deleteModel = new DeletePostTransferModel();
+    private string QueryPostId = "";
+    private string ErrorMessage = "";
+
+    private async Task GetSingle()
+    {
+        post = await PostService.GetSinglePost(QueryPostId, PostQuerySettings.Empty);
+    }
+
+    private async Task GetFullSingle()
+    {
+        post = await PostService.GetSinglePost(QueryPostId, PostQuerySettings.Full);
+    }
+
+    private async Task GetSingleWithLikes()
+    {
+        post = await PostService.GetSinglePost(QueryPostId, PostQuerySettings.WithLikes);
+    }
+
+    private async Task CreatePost()
+    {
+        try
+        {
+            await PostService.CreatePost(createModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private async Task UpdatePost()
+    {
+        try
+        {
+            await PostService.UpdatePost(updateModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private async Task DeletePost()
+    {
+        try
+        {
+            await PostService.DeletePost(deleteModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}

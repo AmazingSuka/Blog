@@ -1,0 +1,51 @@
+﻿@inject LikeService LikeService
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            @Post.Title
+        </div>
+    </div>
+    <div class="card-body">
+        @Post.Content
+        <ul>
+            <li>ImageFileName: @Post.ImageFileName</li>
+            <li>Author: @Post.AuthorId</li>
+            <li>CreatedTimestamp: @Post.CreatedTimestamp</li>
+            @if (Post.EditorId != null)
+            {
+                <li>Editor: @Post.EditorId</li>
+            }
+            @if (Post.EditedTimestamp.Year != new DateTime(1, 1, 1).Year)
+            {
+                <li>EditedTimestamp: @Post.EditedTimestamp</li>
+            }
+        </ul>
+    </div>
+    <div class="card-footer">
+        <button @onclick="AppendLike">Heart</button> @LikesCount
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public IPost Post { get; set; }
+
+    private int LikesCount = 0;
+
+    protected override void OnInitialized()
+    {
+        LikesCount = Post.LikesCollection.Count;
+    }
+
+    private void AppendLike()
+    {
+        LikeService.AppendLikeToPost(new CreateLikeTransferModel
+        {
+            TargetElementId = Post.Id,
+            OwnerId = "5d9cb76cd2372b3431dabc75"
+        }).Wait();
+        LikesCount++;
+    }
+}

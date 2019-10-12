@@ -1,0 +1,28 @@
+﻿@page "/"
+@inject PostService PostService
+@inject LikeService LikeService
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<div>
+    @foreach (IPost post in GetAllPostsAsync())
+    {
+        <PostPrewiew Post="post" />
+    }
+</div>
+
+@code {
+    private string exceptionMessage = "";
+
+    private IEnumerable<IPost> GetAllPostsAsync()
+    {
+        return PostService.GetAllPostsAsync(Application.Posts.Queries.PostQuerySettings.WithLikes).Result;
+    }
+
+    private void AppendLike(string postId)
+    {
+        LikeService.AppendLikeToPost(new CreateLikeTransferModel { OwnerId = "5d9cb76cd2372b3431dabcer", TargetElementId = postId}).Wait();
+    }
+}
